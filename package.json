@@ -7,7 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "prepare": "husky install"
   },
   "prettier": {
     "printWidth": 100,
@@ -52,6 +53,7 @@
     "eslint-plugin-prettier": "^5.5.4",
     "prettier": "^3.7.3",
     "typescript": "~5.9.2",
-    "typescript-eslint": "8.46.4"
+    "typescript-eslint": "8.46.4",
+    "husky": "^8.0.0"
   }
 }
