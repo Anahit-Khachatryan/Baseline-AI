@@ -1,0 +1,35 @@
+import { createFeature, createReducer, createSelector } from '@ngrx/store';
+import { initialState } from '../states/auth.state';
+import { AuthActions } from '../actions/authorization.actions';
+import { Features } from '../features.enum';
+import { immerOn } from 'ngrx-immer/store';
+
+export const authReducer = createReducer(
+  initialState,
+  immerOn(AuthActions.login, (state) => {
+    state.loading = true;
+    state.error = null;
+  }),
+  immerOn(AuthActions.loginSuccess, AuthActions.setToken, (state, { token }) => {
+    state.token = token;
+    state.loading = false;
+  }),
+  immerOn(AuthActions.loginError, (state, { error }) => {
+    state.error = error ?? 'Unknown error';
+    state.loading = false;
+  }),
+  immerOn(AuthActions.logout, AuthActions.logoutSuccess, (state) => {
+    state.token = '';
+    state.user = null;
+    state.loading = false;
+    state.error = null;
+  }),
+);
+
+export const authorizationFeature = createFeature({
+  name: Features.Auth,
+  reducer: authReducer,
+  extraSelectors: ({ selectToken }) => ({
+    selectIsAuthorized: createSelector(selectToken, (token) => !!token),
+  }),
+});
