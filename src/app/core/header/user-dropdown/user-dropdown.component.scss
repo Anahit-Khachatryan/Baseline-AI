@@ -1,0 +1,32 @@
+.user-profile-container {
+  position: relative;
+}
+
+:host ::ng-deep {
+  .user-profile-button {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+  }
+}
+
+::ng-deep .user-menu-popover {
+  min-width: 200px;
+  
+  .p-popover {
+    transform-origin: top right;
+  }
+  
+  .p-popover-content {
+    padding: 0;
+  }
+}
+
+// Position popover to align right edge with button
+::ng-deep .user-menu-popover.p-popover {
+  left: auto !important;
+  right: 0 !important;
+  margin-right: 0 !important;
+}
+

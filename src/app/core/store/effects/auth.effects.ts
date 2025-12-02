@@ -11,9 +11,15 @@ export const login$ = createEffect(
       ofType(AuthActions.login),
       switchMap(({ credentials }: { credentials: Credentials }) =>
         authService.login(credentials).pipe(
-          map((token: string) => AuthActions.loginSuccess({ token })),
+          map((response) =>
+            AuthActions.loginSuccess({
+              token: response.token,
+              user: response.user,
+            }),
+          ),
           catchError((err: unknown) => {
-            const message = typeof err === 'string' ? err : 'Login failed';
+            const message =
+              err instanceof Error ? err.message : 'Login failed';
             return of(AuthActions.loginError({ error: message }));
           }),
         ),

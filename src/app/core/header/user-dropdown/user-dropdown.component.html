@@ -1,0 +1,56 @@
+<div class="user-profile-container">
+  <p-button
+    text
+    size="small"
+    styleClass="justify-content-start user-profile-button"
+    (click)="op.toggle($event)"
+    aria-label="User menu"
+  >
+    <p-avatar
+      [label]="userProfile().initials"
+      shape="circle"
+      size="large"
+      [style]="{ 'background-color': '#6366f1', color: '#ffffff' }"
+    />
+    <div class="flex flex-col items-start gap-1">
+      <span class="text-sm font-semibold text-gray-900 leading-tight">{{ userProfile().name }}</span>
+      <span class="text-xs text-gray-600 leading-tight">{{ userProfile().role }}</span>
+    </div>
+    <i class="pi pi-chevron-down p-button-icon"></i>
+  </p-button>
+  <p-popover
+    #op
+    [dismissable]="true"
+    styleClass="user-menu-popover"
+  >
+    <ng-template #content>
+      <div class="w-full flex flex-col gap-2 p-2">
+        <p-button
+          text
+          size="small"
+          label="Profile"
+          icon="pi pi-user"
+          styleClass="justify-content-start w-full"
+          (click)="handleProfile($event)"
+        />
+        <p-button
+          text
+          size="small"
+          label="Settings"
+          icon="pi pi-cog"
+          styleClass="justify-content-start w-full"
+          (click)="handleSettings($event)"
+        />
+        <p-button
+          text
+          size="small"
+          label="Logout"
+          icon="pi pi-sign-out"
+          styleClass="justify-content-start w-full"
+          (click)="handleLogout($event)"
+        />
+      </div>
+    </ng-template>
+  </p-popover>
+</div>
+

@@ -2,4 +2,10 @@
 // @import "tailwindcss";
 // @use "tailwindcss-primeui";
 
+// Position user menu popover to align right edge with button
+.user-menu-popover.p-popover {
+  left: auto !important;
+  right: 0 !important;
+  transform-origin: top right;
+}
 

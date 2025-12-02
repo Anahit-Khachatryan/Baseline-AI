@@ -10,9 +10,17 @@ export const authReducer = createReducer(
     state.loading = true;
     state.error = null;
   }),
-  immerOn(AuthActions.loginSuccess, AuthActions.setToken, (state, { token }) => {
+  immerOn(AuthActions.loginSuccess, (state, { token, user }) => {
     state.token = token;
+    state.user = user;
     state.loading = false;
+    state.error = null;
+  }),
+  immerOn(AuthActions.setToken, (state, { token }) => {
+    state.token = token;
+  }),
+  immerOn(AuthActions.setUser, (state, { user }) => {
+    state.user = user;
   }),
   immerOn(AuthActions.loginError, (state, { error }) => {
     state.error = error ?? 'Unknown error';

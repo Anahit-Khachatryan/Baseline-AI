@@ -1,0 +1,17 @@
+<header class="flex items-center justify-between px-8 py-4 bg-white border-b border-gray-200 shadow-sm" style="height: 64px;">
+  <div class="flex items-center gap-4">
+    <div class="flex items-center justify-center bg-indigo-600 rounded-lg" style="width: 40px; height: 40px;">
+      <span class="text-white font-bold text-xl">IIF</span>
+    </div>
+    <h1 class="text-2xl font-semibold text-gray-900 m-0">Fatigue Monitor</h1>
+  </div>
+
+  <div class="flex items-center gap-6">
+    <app-notifications />
+    <app-user-dropdown 
+      [userProfile]="userProfile()" 
+      (logoutClick)="onLogout()" 
+    />
+  </div>
+</header>
+

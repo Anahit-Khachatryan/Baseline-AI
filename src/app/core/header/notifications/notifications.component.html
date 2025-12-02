@@ -1,0 +1,28 @@
+<div class="relative">
+  <p-button
+    [text]="true"
+    [rounded]="true"
+    icon="pi pi-bell"
+    (click)="notificationsPopover.toggle($event)"
+    ariaLabel="Notifications"
+    styleClass="p-button-text p-button-lg notification-button"
+  />
+  @if (true) {
+    <p-badge
+      [value]="unreadCount()"
+      severity="danger"
+      styleClass="notification-badge"
+    />
+  }
+  <p-popover
+    #notificationsPopover
+    [dismissable]="true"
+    styleClass="notifications-popover"
+  >
+    <div class="p-4">
+      <h3 class="m-0 mb-2 text-lg font-semibold text-gray-900">Notifications</h3>
+      <p class="m-0 text-gray-600">No new notifications</p>
+    </div>
+  </p-popover>
+</div>
+
