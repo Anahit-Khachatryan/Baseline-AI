@@ -1,13 +1,9 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  inject,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { AuthActions } from '../../core/store/actions/authorization.actions';
-import { authorizationFeature } from '../../core/store/features/auth.feature';
+import { authFeature } from '../../core/store/features/auth.feature';
 import { Credentials } from '../../core/store/models/auth.models';
 
 @Component({
@@ -22,29 +18,20 @@ export class LoginComponent {
   private readonly fb = inject(FormBuilder);
   private readonly store = inject(Store);
 
-  loginForm: FormGroup = this.fb.group({
+  form: FormGroup = this.fb.group({
     username: ['', [Validators.required]],
     password: ['', [Validators.required]],
   });
 
-  loading$ = this.store.select(authorizationFeature.selectLoading);
-  error$ = this.store.select(authorizationFeature.selectError);
+  loading$ = this.store.select(authFeature.selectLoading);
+  error$ = this.store.select(authFeature.selectError);
 
   onSubmit(): void {
-    if (this.loginForm.valid) {
-      const credentials: Credentials = this.loginForm.value;
+    if (this.form.valid) {
+      const credentials: Credentials = this.form.value;
       this.store.dispatch(AuthActions.login({ credentials }));
     } else {
-      this.loginForm.markAllAsTouched();
+      this.form.markAllAsTouched();
     }
   }
-
-  get username() {
-    return this.loginForm.get('username');
-  }
-
-  get password() {
-    return this.loginForm.get('password');
-  }
 }
-

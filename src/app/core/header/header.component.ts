@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { NotificationsComponent } from './notifications/notifications.component';
 import { UserDropdownComponent } from './user-dropdown/user-dropdown.component';
-import { authorizationFeature } from '../store/features/auth.feature';
+import { authFeature } from '../store/features/auth.feature';
 import { AuthActions } from '../store/actions/authorization.actions';
 
 @Component({
@@ -20,8 +20,7 @@ import { AuthActions } from '../store/actions/authorization.actions';
 })
 export class HeaderComponent {
   private readonly store = inject(Store);
-  
-  user = this.store.selectSignal(authorizationFeature.selectUser);
+  user = this.store.selectSignal(authFeature.selectUser);
 
   userProfile = computed(() => {
     const currentUser = this.user();

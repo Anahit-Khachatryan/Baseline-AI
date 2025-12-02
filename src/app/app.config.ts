@@ -10,7 +10,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { routes } from './app.routes';
 import { provideState, provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
-import { authorizationFeature } from './core/store/features/auth.feature';
+import { authFeature } from './core/store/features/auth.feature';
 import * as AuthEffects from './core/store/effects/auth.effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 
@@ -33,7 +33,7 @@ export const appConfig: ApplicationConfig = {
         },
       },
     ),
-    provideState(authorizationFeature),
+    provideState(authFeature),
     provideEffects([AuthEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
   ],

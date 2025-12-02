@@ -1,9 +1,10 @@
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { inject } from '@angular/core';
 import { AuthActions } from '../actions/authorization.actions';
-import { catchError, map, of, switchMap } from 'rxjs';
+import { catchError, map, of, switchMap, tap } from 'rxjs';
 import type { Credentials } from '../models/auth.models';
 import { JwtAuthService } from '../../auth/jwt-auth.service';
+import { Router } from '@angular/router';
 
 export const login$ = createEffect(
   (actions = inject(Actions), authService = inject(JwtAuthService)) => {
@@ -18,13 +19,31 @@ export const login$ = createEffect(
             }),
           ),
           catchError((err: unknown) => {
-            const message =
-              err instanceof Error ? err.message : 'Login failed';
+            const message = err instanceof Error ? err.message : 'Login failed';
             return of(AuthActions.loginError({ error: message }));
           }),
         ),
       ),
     );
   },
+  { functional: true },
+);
+
+export const loginNavigate$ = createEffect(
+  (actions = inject(Actions), router = inject(Router)) =>
+    actions.pipe(
+      ofType(AuthActions.loginSuccess),
+      tap(() => router.navigateByUrl('/dashboard')),
+    ),
+  { functional: true, dispatch: false },
+);
+
+export const logout$ = createEffect(
+  (actions = inject(Actions), router = inject(Router)) =>
+    actions.pipe(
+      ofType(AuthActions.logout),
+      tap(() => router.navigateByUrl('/login')),
+      map(() => AuthActions.logoutSuccess()),
+    ),
   { functional: true },
 );

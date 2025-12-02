@@ -34,7 +34,7 @@ export const authReducer = createReducer(
   }),
 );
 
-export const authorizationFeature = createFeature({
+export const authFeature = createFeature({
   name: Features.Auth,
   reducer: authReducer,
   extraSelectors: ({ selectToken }) => ({
