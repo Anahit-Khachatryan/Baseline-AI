@@ -1,0 +1,23 @@
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.app-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  margin-top: 64px; // Header height
+}
+
+.content {
+  flex: 1;
+  margin-left: 240px; // Sidebar width
+  padding: 24px;
+  overflow-y: auto;
+  background-color: #f9fafb;
+  min-height: calc(100vh - 64px);
+}
+

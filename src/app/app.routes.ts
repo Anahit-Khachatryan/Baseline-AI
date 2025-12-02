@@ -4,6 +4,11 @@ import { MainLayoutComponent } from './core/layout/main-layout.component';
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
+import { DriversComponent } from './features/drivers/drivers.component';
+import { AlertsComponent } from './features/alerts/alerts.component';
+import { AnalyticsComponent } from './features/analytics/analytics.component';
+import { UsersComponent } from './features/admin/users/users.component';
+import { DevicesComponent } from './features/admin/devices/devices.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'login' },
@@ -18,6 +23,11 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       { path: 'dashboard', component: DashboardComponent },
+      { path: 'drivers', component: DriversComponent },
+      { path: 'alerts', component: AlertsComponent },
+      { path: 'analytics', component: AnalyticsComponent },
+      { path: 'admin/users', component: UsersComponent },
+      { path: 'admin/devices', component: DevicesComponent },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     ],
   },

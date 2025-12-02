@@ -1,0 +1,95 @@
+.sidebar {
+  width: 240px;
+  height: calc(100vh - 64px); // Subtract header height
+  background-color: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  padding: 24px 0;
+  overflow-y: auto;
+  position: fixed;
+  left: 0;
+  top: 64px; // Header height
+}
+
+.sidebar-section {
+  margin-bottom: 32px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.sidebar-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6b7280;
+  margin: 0 0 12px 24px;
+  padding: 0;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 24px;
+  color: #374151;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+
+  &:hover {
+    background-color: #f9fafb;
+    color: #111827;
+  }
+
+  &.active {
+    background-color: #f3f4f6;
+    color: #111827;
+    border-left-color: #4f46e5;
+    font-weight: 600;
+  }
+}
+
+.sidebar-item-icon {
+  font-size: 18px;
+  width: 20px;
+  text-align: center;
+  color: #6b7280;
+
+  .sidebar-item.active & {
+    color: #4f46e5;
+  }
+}
+
+.sidebar-item-label {
+  flex: 1;
+}
+
+// Scrollbar styling
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: #f9fafb;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+
+  &:hover {
+    background: #9ca3af;
+  }
+}
+
