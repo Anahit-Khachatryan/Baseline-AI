@@ -11,7 +11,9 @@ import { routes } from './app.routes';
 import { provideState, provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { authFeature } from './core/store/features/auth.feature';
+import { signalrFeature } from './core/store/features/signalr.feature';
 import * as AuthEffects from './core/store/effects/auth.effects';
+import * as SignalREffects from './core/store/effects/signalr.effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 
 export const appConfig: ApplicationConfig = {
@@ -35,6 +37,9 @@ export const appConfig: ApplicationConfig = {
     ),
     provideState(authFeature),
     provideEffects([AuthEffects]),
+    provideState(authFeature),
+    provideState(signalrFeature),
+    provideEffects([AuthEffects, SignalREffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
   ],
 };

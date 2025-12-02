@@ -3,7 +3,9 @@ export const environment = {
   angularBaseUrl: 'http://localhost:4200',
   angularLogoutUrl: 'http://localhost:4200/logout',
   apiBaseUrl: 'http://localhost:5000/api',
-  signalrNotificationEndpoint: 'api/users/notify',
+  signalrNotificationEndpoint: '/users/notify',
+  // Set to true to use mock SignalR service (for frontend testing without backend)
+  useMockSignalR: true,
   defaultauth: 'fackbackend',
   applicationName: 'my-new-app',
   idleTimeout: {

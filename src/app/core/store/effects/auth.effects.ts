@@ -1,6 +1,7 @@
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { inject } from '@angular/core';
 import { AuthActions } from '../actions/authorization.actions';
+import { SignalRActions } from '../actions/signalr.actions';
 import { catchError, map, of, switchMap, tap } from 'rxjs';
 import type { Credentials } from '../models/auth.models';
 import { JwtAuthService } from '../../auth/jwt-auth.service';
@@ -45,5 +46,18 @@ export const logout$ = createEffect(
       tap(() => router.navigateByUrl('/login')),
       map(() => AuthActions.logoutSuccess()),
     ),
+  { functional: true, dispatch: false },
+);
+
+export const startSignalRAfterLogin$ = createEffect(
+  (actions = inject(Actions)) => {
+    return actions.pipe(
+      ofType(AuthActions.loginSuccess),
+      tap(() => {
+        console.log('Login successful, starting SignalR connection...');
+      }),
+      map(() => SignalRActions.startConnection()),
+    );
+  },
   { functional: true },
 );

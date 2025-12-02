@@ -3,7 +3,8 @@ export const environment = {
   angularBaseUrl: 'https://myapp.com',
   angularLogoutUrl: 'https://myapp.com/logout',
   apiBaseUrl: 'https://api.myapp.com/api',
-  signalrNotificationEndpoint: 'api/users/notify',
+  signalrNotificationEndpoint: '/users/notify',
+  useMockSignalR: false, // Always false in production
   defaultauth: 'fackbackend',
   applicationName: 'my-new-app',
   idleTimeout: {

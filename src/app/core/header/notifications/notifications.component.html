@@ -7,7 +7,7 @@
     ariaLabel="Notifications"
     styleClass="p-button-text p-button-lg notification-button"
   />
-  @if (true) {
+  @if (unreadCount() > 0) {
     <p-badge
       [value]="unreadCount()"
       severity="danger"
@@ -19,9 +19,72 @@
     [dismissable]="true"
     styleClass="notifications-popover"
   >
-    <div class="p-4">
-      <h3 class="m-0 mb-2 text-lg font-semibold text-gray-900">Notifications</h3>
-      <p class="m-0 text-gray-600">No new notifications</p>
+    <div class="p-4 min-w-[300px]">
+      <h3 class="m-0 mb-3 text-lg font-semibold text-gray-900">
+        Notifications
+        @if (isDevMode) {
+          <span
+            class="ml-2 text-xs font-normal"
+            [class.text-green-600]="isConnected()"
+            [class.text-red-600]="!isConnected()"
+          >
+            ({{ isConnected() ? 'Connected' : 'Disconnected' }})
+          </span>
+        }
+      </h3>
+
+      @if (notifications$().length === 0) {
+        <p class="m-0 text-gray-600">No new notifications</p>
+      } @else {
+        <div class="space-y-2 max-h-[400px] overflow-y-auto">
+          @for (notification of notifications$(); track notification.actionId) {
+            <div class="p-3 bg-gray-50 rounded border border-gray-200">
+              <p class="m-0 text-sm font-medium text-gray-900">
+                {{ notification.actionName }}
+              </p>
+              <p class="m-0 mt-1 text-xs text-gray-600">
+                {{ notification.message }}
+              </p>
+              <p class="m-0 mt-1 text-xs text-gray-500">
+                {{ notification.entityName }}
+              </p>
+            </div>
+          }
+        </div>
+      }
+
+      @if (isDevMode) {
+        <div class="mt-4 pt-4 border-t border-gray-200">
+          <p class="m-0 mb-2 text-xs font-semibold text-gray-700">
+            Dev Tools:
+          </p>
+          <div class="flex flex-col gap-2">
+            @if (!isConnected()) {
+              <p-button
+                label="Start Connection"
+                size="small"
+                (click)="startConnection()"
+                styleClass="w-full"
+              />
+            } @else {
+              <p-button
+                label="Disconnect"
+                size="small"
+                severity="secondary"
+                (click)="disconnect()"
+                styleClass="w-full"
+              />
+            }
+            <p-button
+              label="Simulate Notification"
+              size="small"
+              severity="info"
+              (click)="simulateNotification()"
+              styleClass="w-full"
+            />
+          </div>
+        </div>
+      }
     </div>
   </p-popover>
 </div>

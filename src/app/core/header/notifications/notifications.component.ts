@@ -1,12 +1,17 @@
 import {
   Component,
-  signal,
+  computed,
   ChangeDetectionStrategy,
+  inject,
+  isDevMode,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Store } from '@ngrx/store';
 import { PopoverModule } from 'primeng/popover';
 import { ButtonModule } from 'primeng/button';
 import { BadgeModule } from 'primeng/badge';
+import { SignalRService } from '../../signalr/signalr.service';
+import { signalrFeature } from '../../store/features/signalr.feature';
+import { SignalRActions } from '../../store/actions/signalr.actions';
 
 @Component({
   selector: 'app-notifications',
@@ -16,6 +21,51 @@ import { BadgeModule } from 'primeng/badge';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NotificationsComponent {
-  unreadCount = signal(3);
-}
+  private readonly store = inject(Store);
 
+  notifications$ = this.store.selectSignal(
+    signalrFeature.selectActionProcessedNotifications,
+  );
+  unreadCount = computed(() => this.notifications$().length);
+
+  isConnected = this.store.selectSignal(signalrFeature.selectIsConnected);
+  isDevMode = isDevMode();
+
+  // Test helper methods (only available in dev mode)
+  startConnection() {
+    this.store.dispatch(SignalRActions.startConnection());
+    console.log('SignalR connection started');
+  }
+
+  disconnect() {
+    this.store.dispatch(SignalRActions.disconnect());
+    console.log('SignalR connection disconnected');
+  }
+
+
+
+  signalrService = inject(SignalRService);
+  simulateNotification() {
+    // Use the service method if mock mode is enabled, otherwise dispatch directly
+    if (this.signalrService.sendTestNotification) {
+      this.signalrService.sendTestNotification(
+        `Test notification ${new Date().toLocaleTimeString()}`,
+      );
+    } else {
+      // Fallback: dispatch directly if service method not available
+      this.store.dispatch(
+        SignalRActions.actionProcessed({
+          notification: {
+            actionId: Math.floor(Math.random() * 1000),
+            actionName: 'Test Action',
+            entityName: 'Test Entity',
+            entityIds: [1, 2, 3],
+            modifierId: 1,
+            message: `Test notification ${new Date().toLocaleTimeString()}`,
+          },
+        }),
+      );
+      console.log('Test notification dispatched');
+    }
+  }
+}
