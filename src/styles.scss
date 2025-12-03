@@ -2,7 +2,7 @@
 // PrimeNG global styles and theme (use @import to include CSS)
 //@import "@primeng/themes/aura"; // you can switch to another theme if desired
 //@import "primeng/resources/primeng.css";
-//@import "primeicons/primeicons.css"; // needed for pi icons (e.g., pi pi-search)
+@import "primeicons/primeicons.css"; // needed for pi icons (e.g., pi pi-search)
 
 // Optional Tailwind + PrimeUI utilities (uncomment if you use it)
 // @use "tailwindcss-primeui";
