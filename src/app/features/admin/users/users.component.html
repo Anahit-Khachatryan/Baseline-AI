@@ -1,0 +1,268 @@
+<div class="users-container">
+  <p-toast />
+  <p-confirmDialog />
+
+  <div class="card">
+    <p-toolbar>
+      <div class="p-toolbar-group-start">
+        <h2 class="text-2xl font-bold m-0">User Management</h2>
+      </div>
+      <div class="p-toolbar-group-end">
+        <p-button
+          label="Add User"
+          icon="pi pi-plus"
+          (click)="openNew()"
+          styleClass="p-button-success"
+        />
+        @if (selectedUsers().length > 0) {
+          <p-button
+            [label]="'Delete (' + selectedUsers().length + ')'"
+            icon="pi pi-trash"
+            (click)="deleteSelectedUsers()"
+            styleClass="p-button-danger ml-2"
+          />
+        }
+      </div>
+    </p-toolbar>
+
+    <div class="filters-section">
+      <div class="filter-group">
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input
+            type="text"
+            pInputText
+            placeholder="Search by name, email, or phone"
+            [value]="searchText()"
+            (input)="onSearch($event)"
+            class="search-input"
+          />
+        </span>
+      </div>
+
+      <div class="filter-group">
+        <!-- <p-dropdown
+          [options]="roles"
+          placeholder="Filter by Role"
+          [value]="selectedRole()"
+          (onChange)="onRoleFilterChange($event.value)"
+          [showClear]="true"
+          styleClass="filter-dropdown"
+        /> -->
+      </div>
+
+      <div class="filter-group">
+        <!-- <p-dropdown
+          [options]="statuses"
+          placeholder="Filter by Status"
+          [value]="selectedStatus()"
+          (onChange)="onStatusFilterChange($event.value)"
+          [showClear]="true"
+          styleClass="filter-dropdown"
+        /> -->
+      </div>
+
+      @if (searchText() || selectedRole() || selectedStatus()) {
+        <div class="filter-group">
+          <p-button
+            label="Clear Filters"
+            icon="pi pi-filter-slash"
+            (click)="clearFilters()"
+            styleClass="p-button-text"
+          />
+        </div>
+      }
+    </div>
+
+    <p-table
+      #dt
+      [value]="filteredData()"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [globalFilterFields]="['firstName', 'lastName', 'email', 'phone']"
+      [tableStyle]="{ 'min-width': '50rem' }"
+      [selection]="selectedUsers()"
+      (selectionChange)="onSelectionChange($event)"
+      [rowHover]="true"
+      dataKey="id"
+      styleClass="p-datatable-striped"
+      [loading]="loading()"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 3rem">
+            <p-tableHeaderCheckbox />
+          </th>
+          <th pSortableColumn="firstName">
+            Name <p-sortIcon field="firstName" />
+          </th>
+          <th pSortableColumn="email">
+            Email <p-sortIcon field="email" />
+          </th>
+          <th pSortableColumn="role">
+            Role <p-sortIcon field="role" />
+          </th>
+          <th pSortableColumn="department">
+            Department <p-sortIcon field="department" />
+          </th>
+          <th pSortableColumn="status">
+            Status <p-sortIcon field="status" />
+          </th>
+          <th pSortableColumn="phone">Phone</th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-user>
+        <tr>
+          <td>
+            <p-tableCheckbox [value]="user" />
+          </td>
+          <td>{{ user.firstName }} {{ user.lastName }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.role }}</td>
+          <td>{{ user.department }}</td>
+          <td>
+            <!-- <p-tag
+              [value]="user.status"
+              [severity]="getStatusSeverity(user.status)"
+            /> -->
+          </td>
+          <td>{{ user.phone }}</td>
+          <td>
+            <div class="action-buttons">
+              <p-button
+                icon="pi pi-pencil"
+                (click)="editUser(user)"
+                styleClass="p-button-text p-button-rounded p-button-success"
+                [pTooltip]="'Edit'"
+                pTooltipPosition="top"
+              />
+              <p-button
+                icon="pi pi-trash"
+                (click)="deleteUser(user)"
+                styleClass="p-button-text p-button-rounded p-button-danger"
+                [pTooltip]="'Delete'"
+                pTooltipPosition="top"
+              />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="8" class="text-center p-4">
+            <p class="text-gray-500">No users found</p>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <p-dialog
+    [header]="editingUser() ? 'Edit User' : 'Add User'"
+    [(visible)]="displayDialog"
+    [modal]="true"
+    [style]="{ width: '500px' }"
+    (onHide)="editingUser.set(null)"
+  >
+    <div class="user-form">
+      <div class="form-group">
+        <label for="firstName">First Name *</label>
+        <input
+          id="firstName"
+          type="text"
+          pInputText
+          [(ngModel)]="userForm().firstName"
+          placeholder="Enter first name"
+          class="w-full"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="lastName">Last Name *</label>
+        <input
+          id="lastName"
+          type="text"
+          pInputText
+          [(ngModel)]="userForm().lastName"
+          placeholder="Enter last name"
+          class="w-full"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email *</label>
+        <input
+          id="email"
+          type="email"
+          pInputText
+          [(ngModel)]="userForm().email"
+          placeholder="Enter email"
+          class="w-full"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone</label>
+        <input
+          id="phone"
+          type="text"
+          pInputText
+          [(ngModel)]="userForm().phone"
+          placeholder="Enter phone number"
+          class="w-full"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="role">Role *</label>
+        <!-- <p-dropdown
+          id="role"
+          [options]="roles"
+          [(ngModel)]="userForm().role"
+          placeholder="Select role"
+          class="w-full"
+        /> -->
+      </div>
+
+      <div class="form-group">
+        <label for="department">Department</label>
+        <!-- <p-dropdown
+          id="department"
+          [options]="departments"
+          [(ngModel)]="userForm().department"
+          placeholder="Select department"
+          class="w-full"
+        /> -->
+      </div>
+
+      <div class="form-group">
+        <label for="status">Status</label>
+        <!-- <p-dropdown
+          id="status"
+          [options]="statuses"
+          [(ngModel)]="userForm().status"
+          placeholder="Select status"
+          class="w-full"
+        /> -->
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <p-button
+        label="Cancel"
+        severity="contrast"
+        outlined
+        (click)="displayDialog.set(false)"
+        styleClass="p-button-text"
+      />
+      <p-button
+        label="Save"
+        severity="success"
+        (click)="saveUser()"
+      />
+    </ng-template>
+  </p-dialog>
+</div>
+
