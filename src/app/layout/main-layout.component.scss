@@ -9,12 +9,10 @@
   display: flex;
   flex: 1;
   overflow: hidden;
-  margin-top: 64px; // Header height
 }
 
 .content {
   flex: 1;
-  margin-left: 240px; // Sidebar width
   padding: 24px;
   overflow-y: auto;
   background-color: #f9fafb;

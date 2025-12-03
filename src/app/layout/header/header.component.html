@@ -8,10 +8,11 @@
 
   <div class="flex items-center gap-6">
     <app-notifications />
-    <app-user-dropdown 
-      [userProfile]="userProfile()" 
-      (logoutClick)="onLogout()" 
+    <app-user-dropdown
+      [userProfile]="userProfile()"
+      (logoutClick)="onLogout()"
     />
+<!--    <p-button label="Logout" icon="pi pi-sign-out" (click)="onLogout()" />-->
   </div>
 </header>
 

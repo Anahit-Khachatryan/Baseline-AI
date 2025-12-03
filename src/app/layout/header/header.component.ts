@@ -7,7 +7,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { authFeature } from '../../core/store/features/auth.feature';
-import { AuthActions } from '../../core/store/actions/authorization.actions';
+import { AuthActions } from '../../core/store/actions/auth.actions';
 import { NotificationsComponent } from '../notifications/notifications.component';
 import { UserDropdownComponent } from '../user-dropdown/user-dropdown.component';
 

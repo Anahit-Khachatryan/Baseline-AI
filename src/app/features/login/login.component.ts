@@ -2,13 +2,12 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
-import { AuthActions } from '../../core/store/actions/authorization.actions';
+import { AuthActions } from '../../core/store/actions/auth.actions';
 import { authFeature } from '../../core/store/features/auth.feature';
 import { Credentials } from '../../core/store/models/auth.models';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',

@@ -1,22 +1,20 @@
-import {
-  ApplicationConfig,
-  provideBrowserGlobalErrorListeners,
-  provideZoneChangeDetection,
-  isDevMode,
-} from '@angular/core';
+import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection, isDevMode,provideAppInitializer, } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { providePrimeNG } from 'primeng/config';
-import { routes } from './app.routes';
-import { provideState, provideStore } from '@ngrx/store';
+import { definePreset } from '@primeuix/themes';
+import Aura from '@primeuix/themes/aura';
+
+import { provideStore, provideState } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
+import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { authFeature } from './core/store/features/auth.feature';
 import { signalrFeature } from './core/store/features/signalr.feature';
 import * as AuthEffects from './core/store/effects/auth.effects';
 import * as SignalREffects from './core/store/effects/signalr.effects';
-import { provideStoreDevtools } from '@ngrx/store-devtools';
-import { definePreset } from '@primeuix/themes';
-import Aura from '@primeuix/themes/aura';
+import * as AppEffects from './core/store/effects/app.effects';
+import { routes } from './app.routes';
+import { appInitializer } from '../app-initializer';
 
 
 const Noir = definePreset(Aura, {
@@ -69,6 +67,7 @@ const Noir = definePreset(Aura, {
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideAppInitializer(appInitializer),
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideAnimations(),
@@ -101,10 +100,9 @@ export const appConfig: ApplicationConfig = {
       },
     }),
     provideState(authFeature),
-    provideEffects([AuthEffects]),
     provideState(authFeature),
     provideState(signalrFeature),
-    provideEffects([AuthEffects, SignalREffects]),
+    provideEffects([AuthEffects, SignalREffects, AppEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
   ],
 };

@@ -2,7 +2,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { SignalRActions } from '../actions/signalr.actions';
-import { AuthActions } from '../actions/authorization.actions';
+import { AuthActions } from '../actions/auth.actions';
 import { SignalRService } from '../../signalr/signalr.service';
 import { map, catchError, of, tap } from 'rxjs';
 

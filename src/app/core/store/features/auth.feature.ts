@@ -1,6 +1,6 @@
 import { createFeature, createReducer, createSelector } from '@ngrx/store';
 import { initialState } from '../states/auth.state';
-import { AuthActions } from '../actions/authorization.actions';
+import { AuthActions } from '../actions/auth.actions';
 import { Features } from '../features.enum';
 import { immerOn } from 'ngrx-immer/store';
 
