@@ -33,11 +33,11 @@
         }
       </h3>
 
-      @if (notifications$().length === 0) {
+      @if (notifications().length === 0) {
         <p class="m-0 text-gray-600">No new notifications</p>
       } @else {
         <div class="space-y-2 max-h-[400px] overflow-y-auto">
-          @for (notification of notifications$(); track notification.actionId) {
+          @for (notification of notifications(); track notification.actionId) {
             <div class="p-3 bg-gray-50 rounded border border-gray-200">
               <p class="m-0 text-sm font-medium text-gray-900">
                 {{ notification.actionName }}

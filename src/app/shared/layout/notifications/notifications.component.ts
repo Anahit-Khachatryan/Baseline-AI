@@ -23,10 +23,10 @@ import { SignalRService } from '../../../core/signalr/signalr.service';
 export class NotificationsComponent {
   private readonly store = inject(Store);
 
-  notifications$ = this.store.selectSignal(
+  notifications = this.store.selectSignal(
     signalrFeature.selectActionProcessedNotifications,
   );
-  unreadCount = computed(() => this.notifications$().length);
+  unreadCount = computed(() => this.notifications().length);
   isConnected = this.store.selectSignal(signalrFeature.selectIsConnected);
 
   //for testing, after real data remove this
