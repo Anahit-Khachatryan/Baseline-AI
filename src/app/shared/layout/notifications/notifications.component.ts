@@ -30,14 +30,11 @@ export class NotificationsComponent {
   isConnected = this.store.selectSignal(signalrFeature.selectIsConnected);
 
   //for testing, after real data remove this
-  isDevMode = isDevMode();
-
-  // Test helper methods (only available in dev mode)
+  isTestMode = isDevMode();
   startConnection() {
     this.store.dispatch(SignalRActions.startConnection());
     console.log('SignalR connection started');
   }
-
   disconnect() {
     this.store.dispatch(SignalRActions.disconnect());
     console.log('SignalR connection disconnected');

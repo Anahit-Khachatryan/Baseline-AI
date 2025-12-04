@@ -9,7 +9,6 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -17,7 +16,7 @@ import { DialogModule } from 'primeng/dialog';
 import { TagModule } from 'primeng/tag';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { TooltipModule } from 'primeng/tooltip';
 import { User, CreateUserRequest } from '../../../shared/models/admin-user.models';
@@ -39,7 +38,7 @@ import { usersFeature } from './store/features/users.feature';
     ToastModule,
     TooltipModule,
   ],
-  providers: [ConfirmationService, MessageService],
+  providers: [ConfirmationService],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -47,18 +46,17 @@ import { usersFeature } from './store/features/users.feature';
 export class UsersComponent implements OnInit {
   private readonly store = inject(Store);
   private readonly confirmationService = inject(ConfirmationService);
-  private readonly messageService = inject(MessageService);
 
   // Store selectors
   users = this.store.selectSignal(usersFeature.selectUsers);
   selectedUsers = this.store.selectSignal(usersFeature.selectSelectedUsers);
   loading = this.store.selectSignal(usersFeature.selectLoading);
-  error = this.store.selectSignal(usersFeature.selectError);
+  // error = this.store.selectSignal(usersFeature.selectError);
 
   // Local UI state
   searchText = signal('');
-  selectedRole = signal<string | null>(null);
-  selectedStatus = signal<string | null>(null);
+  // selectedRole = signal<string | null>(null);
+  // selectedStatus = signal<string | null>(null);
   displayDialog = signal(false);
   editingUser = signal<User | null>(null);
   userForm = signal<Partial<CreateUserRequest>>({
@@ -97,15 +95,15 @@ export class UsersComponent implements OnInit {
       );
     }
 
-    // Role filter
-    if (this.selectedRole()) {
-      result = result.filter((user) => user.role === this.selectedRole());
-    }
+    // // Role filter
+    // if (this.selectedRole()) {
+    //   result = result.filter((user) => user.role === this.selectedRole());
+    // }
 
-    // Status filter
-    if (this.selectedStatus()) {
-      result = result.filter((user) => user.status === this.selectedStatus());
-    }
+    // // Status filter
+    // if (this.selectedStatus()) {
+    //   result = result.filter((user) => user.status === this.selectedStatus());
+    // }
 
     return result;
   });
@@ -121,17 +119,17 @@ export class UsersComponent implements OnInit {
   }
 
   onRoleFilterChange(role: string | null): void {
-    this.selectedRole.set(role);
+    // this.selectedRole.set(role);
   }
 
   onStatusFilterChange(status: string | null): void {
-    this.selectedStatus.set(status);
+    // this.selectedStatus.set(status);
   }
 
   clearFilters(): void {
     this.searchText.set('');
-    this.selectedRole.set(null);
-    this.selectedStatus.set(null);
+    // this.selectedRole.set(null);
+    // this.selectedStatus.set(null);
   }
 
   openNew(): void {
@@ -168,12 +166,8 @@ export class UsersComponent implements OnInit {
       header: 'Confirm Delete',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
+        // Toast will be shown automatically by toast.effects.ts
         this.store.dispatch(UsersActions.deleteUser({ id: user.id }));
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'User deleted successfully',
-        });
       },
     });
   }
@@ -190,31 +184,24 @@ export class UsersComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         const ids = selected.map((u) => u.id);
+        // Toast will be shown automatically by toast.effects.ts
         this.store.dispatch(UsersActions.deleteUsers({ ids }));
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: `${selected.length} user(s) deleted successfully`,
-        });
       },
     });
   }
 
   saveUser(): void {
     const form = this.userForm();
+    console.log('form', form)
     const editing = this.editingUser();
 
     if (!form.firstName || !form.lastName || !form.email || !form.role) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Please fill in all required fields',
-      });
+      console.log('add validation error')
       return;
     }
 
     if (editing) {
-      // Update existing user
+      // Update existing user - toast will be shown automatically by toast.effects.ts
       this.store.dispatch(
         UsersActions.updateUser({
           userData: {
@@ -223,23 +210,13 @@ export class UsersComponent implements OnInit {
           },
         }),
       );
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'User updated successfully',
-      });
     } else {
-      // Create new user
+      // Create new user - toast will be shown automatically by toast.effects.ts
       this.store.dispatch(
         UsersActions.createUser({
           userData: form as CreateUserRequest,
         }),
       );
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'User created successfully',
-      });
     }
 
     this.displayDialog.set(false);

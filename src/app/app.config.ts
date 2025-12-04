@@ -8,6 +8,7 @@ import Aura from '@primeuix/themes/aura';
 import { provideStore, provideState } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
+import { provideEventPlugins } from '@taiga-ui/event-plugins';
 import { authFeature } from './core/store/features/auth.feature';
 import { signalrFeature } from './core/store/features/signalr.feature';
 import * as AuthEffects from './core/store/effects/auth.effects';
@@ -106,6 +107,7 @@ export const appConfig: ApplicationConfig = {
     provideState(signalrFeature),
     provideState(usersFeature),
     provideEffects([AuthEffects, SignalREffects, UsersEffects, AppEffects, ToastEffects]),
+    provideEventPlugins(),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
   ],
 };
