@@ -18,9 +18,12 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { TooltipModule } from 'primeng/tooltip';
+import { SelectModule } from 'primeng/select';
 import { User, CreateUserRequest } from '../../../shared/models/admin-user.models';
 import { UsersActions } from './store/actions/users.actions';
 import { usersFeature } from './store/features/users.feature';
+import { lookupFeature } from '../../../core/store/features/lookup.feature';
+import { LookupActions } from '../../../core/store/actions/lookup.actions';
 @Component({
   selector: 'app-users',
   standalone: true,
@@ -35,6 +38,7 @@ import { usersFeature } from './store/features/users.feature';
     ConfirmDialogModule,
     ToastModule,
     TooltipModule,
+    SelectModule,
   ],
   providers: [ConfirmationService],
   templateUrl: './users.component.html',
@@ -50,6 +54,11 @@ export class UsersComponent implements OnInit {
   selectedUsers = this.store.selectSignal(usersFeature.selectSelectedUsers);
   loading = this.store.selectSignal(usersFeature.selectLoading);
   // error = this.store.selectSignal(usersFeature.selectError);
+  
+  // Lookup selectors
+  roles = this.store.selectSignal(lookupFeature.selectRoles);
+  statuses = this.store.selectSignal(lookupFeature.selectStatuses);
+  departments = this.store.selectSignal(lookupFeature.selectDepartments);
 
   // Local UI state
   searchText = signal('');
@@ -67,16 +76,6 @@ export class UsersComponent implements OnInit {
     department: '',
   });
 
-  roles = ['Admin', 'Manager', 'Fleet Manager', 'Operator', 'Viewer'];
-  statuses = ['Active', 'Inactive', 'Pending'];
-  departments = [
-    'Operations',
-    'Fleet Management',
-    'Safety',
-    'IT',
-    'Administration',
-  ];
-
   // Computed properties for filtering
   filteredData = computed(() => {
     let result = [...this.users()];
@@ -93,41 +92,18 @@ export class UsersComponent implements OnInit {
       );
     }
 
-    // // Role filter
-    // if (this.selectedRole()) {
-    //   result = result.filter((user) => user.role === this.selectedRole());
-    // }
-
-    // // Status filter
-    // if (this.selectedStatus()) {
-    //   result = result.filter((user) => user.status === this.selectedStatus());
-    // }
-
     return result;
   });
 
   ngOnInit(): void {
-    // Load users on component init
+    // Load users and lookups on component init
     this.store.dispatch(UsersActions.loadUsers());
+    this.store.dispatch(LookupActions.loadLookups());
   }
 
   onSearch(event: Event): void {
     const target = event.target as HTMLInputElement;
     this.searchText.set(target.value);
-  }
-
-  onRoleFilterChange(role: string | null): void {
-    // this.selectedRole.set(role);
-  }
-
-  onStatusFilterChange(status: string | null): void {
-    // this.selectedStatus.set(status);
-  }
-
-  clearFilters(): void {
-    this.searchText.set('');
-    // this.selectedRole.set(null);
-    // this.selectedStatus.set(null);
   }
 
   openNew(): void {
@@ -199,7 +175,6 @@ export class UsersComponent implements OnInit {
     }
 
     if (editing) {
-      // Update existing user - toast will be shown automatically by toast.effects.ts
       this.store.dispatch(
         UsersActions.updateUser({
           userData: {
@@ -209,7 +184,6 @@ export class UsersComponent implements OnInit {
         }),
       );
     } else {
-      // Create new user - toast will be shown automatically by toast.effects.ts
       this.store.dispatch(
         UsersActions.createUser({
           userData: form as CreateUserRequest,
@@ -225,16 +199,4 @@ export class UsersComponent implements OnInit {
     this.store.dispatch(UsersActions.setSelectedUsers({ users }));
   }
 
-  getStatusSeverity(status: string): string {
-    switch (status) {
-      case 'Active':
-        return 'success';
-      case 'Inactive':
-        return 'danger';
-      case 'Pending':
-        return 'warning';
-      default:
-        return '';
-    }
-  }
 }

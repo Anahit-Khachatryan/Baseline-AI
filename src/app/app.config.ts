@@ -12,11 +12,13 @@ import { provideEventPlugins } from '@taiga-ui/event-plugins';
 import { authFeature } from './core/store/features/auth.feature';
 import { signalrFeature } from './core/store/features/signalr.feature';
 import { appMenuFeature } from './core/store/features/app.feature';
+import { lookupFeature } from './core/store/features/lookup.feature';
 import * as AuthEffects from './core/store/effects/auth.effects';
 import * as SignalREffects from './core/store/effects/signalr.effects';
 import * as UsersEffects from './features/admin/users/store/effects/users.effects';
 import * as AppEffects from './core/store/effects/app.effects';
 import * as ToastEffects from './core/store/effects/toast.effects';
+import * as LookupEffects from './core/store/effects/lookup.effects';
 import { routes } from './app.routes';
 import { appInitializer } from '../app-initializer';
 import { usersFeature } from './features/admin/users/store/features/users.feature';
@@ -108,7 +110,8 @@ export const appConfig: ApplicationConfig = {
     provideState(signalrFeature),
     provideState(usersFeature),
     provideState(appMenuFeature),
-    provideEffects([AuthEffects, SignalREffects, UsersEffects, AppEffects, ToastEffects]),
+    provideState(lookupFeature),
+    provideEffects([AuthEffects, SignalREffects, UsersEffects, AppEffects, ToastEffects, LookupEffects]),
     provideEventPlugins(),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
   ],
