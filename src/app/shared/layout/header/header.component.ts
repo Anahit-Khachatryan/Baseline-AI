@@ -4,16 +4,14 @@ import {
   ChangeDetectionStrategy,
   inject,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { authFeature } from '../../../core/store/features/auth.feature';
-import { AuthActions } from '../../../core/store/actions/auth.actions';
 import { NotificationsComponent } from '../../layout/notifications/notifications.component';
 import { UserDropdownComponent } from '../../layout/user-dropdown/user-dropdown.component';
 
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, NotificationsComponent, UserDropdownComponent],
+  imports: [ NotificationsComponent, UserDropdownComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
