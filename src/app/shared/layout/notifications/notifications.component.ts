@@ -9,9 +9,9 @@ import { Store } from '@ngrx/store';
 import { PopoverModule } from 'primeng/popover';
 import { ButtonModule } from 'primeng/button';
 import { BadgeModule } from 'primeng/badge';
-import { signalrFeature } from '../../core/store/features/signalr.feature';
-import { SignalRActions } from '../../core/store/actions/signalr.actions';
-import { SignalRService } from '../../core/signalr/signalr.service';
+import { signalrFeature } from '../../../core/store/features/signalr.feature';
+import { SignalRActions } from '../../../core/store/actions/signalr.actions';
+import { SignalRService } from '../../../core/signalr/signalr.service';
 
 @Component({
   selector: 'app-notifications',
