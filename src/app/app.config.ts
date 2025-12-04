@@ -2,6 +2,7 @@ import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChang
 import { provideRouter } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
+import { MessageService } from 'primeng/api';
 import { definePreset } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
 import { provideStore, provideState } from '@ngrx/store';
@@ -13,6 +14,7 @@ import * as AuthEffects from './core/store/effects/auth.effects';
 import * as SignalREffects from './core/store/effects/signalr.effects';
 import * as UsersEffects from './features/admin/users/store/effects/users.effects';
 import * as AppEffects from './core/store/effects/app.effects';
+import * as ToastEffects from './core/store/effects/toast.effects';
 import { routes } from './app.routes';
 import { appInitializer } from '../app-initializer';
 import { usersFeature } from './features/admin/users/store/features/users.feature';
@@ -72,6 +74,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideAnimationsAsync(),
     provideRouter(routes),
+    MessageService,
     provideStore(
       {},
       {
@@ -102,7 +105,7 @@ export const appConfig: ApplicationConfig = {
     provideState(authFeature),
     provideState(signalrFeature),
     provideState(usersFeature),
-    provideEffects([AuthEffects, SignalREffects, UsersEffects, AppEffects]),
+    provideEffects([AuthEffects, SignalREffects, UsersEffects, AppEffects, ToastEffects]),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
   ],
 };

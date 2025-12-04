@@ -3,7 +3,7 @@ import { AuthActions } from '../actions/auth.actions';
 import { AppActions } from '../actions/app.actions';
 import { inject } from '@angular/core';
 import { map } from 'rxjs';
-import { LocalStorageService } from '../../../shared/services/loacl-storage/local-storage.service';
+import { LocalStorageService } from '../../../shared/services/local-storage.service';
 
 export const applicationInit$ = createEffect(
   (actions = inject(Actions), localStorageService = inject(LocalStorageService)) => {

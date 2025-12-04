@@ -12,7 +12,7 @@ export class LocalStorageService {
   }
 
   get(key: string) {
-    return localStorage.getItem(key) || null;
+    return localStorage.getItem(key) || null; //add checking and generic type
   }
 
   remove(key: string) {
@@ -23,7 +23,4 @@ export class LocalStorageService {
     localStorage.clear();
   }
 
-  has(key: string) {
-    return localStorage.getItem(key) !== null;
-  }
 }

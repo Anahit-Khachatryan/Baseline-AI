@@ -6,7 +6,7 @@ import { catchError, map, of, switchMap, tap } from 'rxjs';
 import type { Credentials } from '../models/auth.models';
 import { JwtAuthService } from '../../auth/jwt-auth.service';
 import { Router } from '@angular/router';
-import { LocalStorageService } from '../../../shared/services/loacl-storage/local-storage.service';
+import { LocalStorageService } from '../../../shared/services/local-storage.service';
 
 export const login$ = createEffect(
   (actions = inject(Actions), authService = inject(JwtAuthService)) => {
