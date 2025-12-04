@@ -27,8 +27,9 @@ export class NotificationsComponent {
     signalrFeature.selectActionProcessedNotifications,
   );
   unreadCount = computed(() => this.notifications$().length);
-
   isConnected = this.store.selectSignal(signalrFeature.selectIsConnected);
+
+  //for testing, after real data remove this
   isDevMode = isDevMode();
 
   // Test helper methods (only available in dev mode)
@@ -45,6 +46,7 @@ export class NotificationsComponent {
 
 
   signalrService = inject(SignalRService);
+  //for testing, after real data remove this
   simulateNotification() {
     // Use the service method if mock mode is enabled, otherwise dispatch directly
     if (this.signalrService.sendTestNotification) {

@@ -8,7 +8,8 @@ import { AlertsComponent } from './features/alerts/alerts.component';
 import { AnalyticsComponent } from './features/analytics/analytics.component';
 import { UsersComponent } from './features/admin/users/users.component';
 import { DevicesComponent } from './features/admin/devices/devices.component';
-import { MainLayoutComponent } from './layout/main-layout.component';
+import { MainLayoutComponent } from './shared/layout/main-layout.component';
+
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'login' },
   {

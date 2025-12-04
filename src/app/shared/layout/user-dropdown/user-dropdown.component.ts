@@ -2,13 +2,13 @@ import {
   Component,
   ChangeDetectionStrategy,
   input,
-  output,
+  inject,
 } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { PopoverModule } from 'primeng/popover';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
-
-
+import { AuthActions } from '../../../core/store/actions/auth.actions';
 @Component({
   selector: 'app-user-dropdown',
   imports: [
@@ -22,23 +22,15 @@ import { ButtonModule } from 'primeng/button';
 })
 export class UserDropdownComponent {
   userProfile = input.required<any>();
-  profileClick = output<void>();
-  settingsClick = output<void>();
-  logoutClick = output<void>();
-
+  private readonly store = inject(Store);
   handleProfile(event: Event) {
     event.stopPropagation();
-    this.profileClick.emit();
   }
-
   handleSettings(event: Event) {
     event.stopPropagation();
-    this.settingsClick.emit();
   }
-
-  handleLogout(event: Event) {
-    event.stopPropagation();
-    this.logoutClick.emit();
+  handleLogout() {
+    this.store.dispatch(AuthActions.logout());
   }
 }
 

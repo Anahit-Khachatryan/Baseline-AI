@@ -34,8 +34,5 @@ export class HeaderComponent {
     return currentUser;
   });
 
-  onLogout(): void {
-    this.store.dispatch(AuthActions.logout());
-  }
 }
 
