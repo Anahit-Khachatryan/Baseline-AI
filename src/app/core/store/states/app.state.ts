@@ -1,3 +1,9 @@
-export type AppState = {};
+import type { MenuItem } from 'primeng/api';
 
-export const initialAppState: AppState = {};
+export interface AppState {
+  menuItems: MenuItem[];
+}
+
+export const initialAppState: AppState = {
+  menuItems: [],
+};

@@ -11,6 +11,7 @@ import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { provideEventPlugins } from '@taiga-ui/event-plugins';
 import { authFeature } from './core/store/features/auth.feature';
 import { signalrFeature } from './core/store/features/signalr.feature';
+import { appMenuFeature } from './core/store/features/app.feature';
 import * as AuthEffects from './core/store/effects/auth.effects';
 import * as SignalREffects from './core/store/effects/signalr.effects';
 import * as UsersEffects from './features/admin/users/store/effects/users.effects';
@@ -106,6 +107,7 @@ export const appConfig: ApplicationConfig = {
     provideState(authFeature),
     provideState(signalrFeature),
     provideState(usersFeature),
+    provideState(appMenuFeature),
     provideEffects([AuthEffects, SignalREffects, UsersEffects, AppEffects, ToastEffects]),
     provideEventPlugins(),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
