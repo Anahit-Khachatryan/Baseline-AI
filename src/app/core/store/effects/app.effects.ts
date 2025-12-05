@@ -3,7 +3,6 @@ import { AuthActions } from '../actions/auth.actions';
 import { AppActions } from '../actions/app.actions';
 import { inject } from '@angular/core';
 import { map, switchMap } from 'rxjs';
-import { LocalStorageService } from '../../../shared/services/local-storage.service';
 import type { MenuItem } from 'primeng/api';
 
 const getMenuItems = (): MenuItem[] => [
@@ -55,13 +54,13 @@ const getMenuItems = (): MenuItem[] => [
 ];
 
 export const applicationInit$ = createEffect(
-  (actions = inject(Actions), localStorageService = inject(LocalStorageService)) => {
+  (actions = inject(Actions)) => {
     return actions.pipe(
       ofType(AppActions.appInit),
       switchMap(() => {
-        const token = localStorageService.get('token') ?? '';
         return [
-          AuthActions.setToken({ token }),
+          // Try to restore the session from HttpOnly cookie
+          AuthActions.loadSession(),
           AppActions.loadMenuItems(),
         ];
       }),

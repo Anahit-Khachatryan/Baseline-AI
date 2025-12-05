@@ -1,4 +1,5 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection, isDevMode,provideAppInitializer, } from '@angular/core';
+import { provideHttpClient } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
@@ -112,6 +113,7 @@ export const appConfig: ApplicationConfig = {
     provideState(appMenuFeature),
     provideState(lookupFeature),
     provideEffects([AuthEffects, SignalREffects, UsersEffects, AppEffects, ToastEffects, LookupEffects]),
+    provideHttpClient(),
     provideEventPlugins(),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
   ],

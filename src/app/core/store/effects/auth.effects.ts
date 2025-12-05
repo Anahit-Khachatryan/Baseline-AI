@@ -4,19 +4,18 @@ import { AuthActions } from '../actions/auth.actions';
 import { SignalRActions } from '../actions/signalr.actions';
 import { catchError, map, of, switchMap, tap } from 'rxjs';
 import type { Credentials } from '../models/auth.models';
-import { JwtAuthService } from '../../auth/jwt-auth.service';
+import { SessionAuthService } from '../../auth/session-auth.service';
 import { Router } from '@angular/router';
-import { LocalStorageService } from '../../../shared/services/local-storage.service';
 
 export const login$ = createEffect(
-  (actions = inject(Actions), authService = inject(JwtAuthService)) => {
+  (actions = inject(Actions), authService = inject(SessionAuthService)) => {
     return actions.pipe(
       ofType(AuthActions.login),
       switchMap(({ credentials }: { credentials: Credentials }) =>
         authService.login(credentials).pipe(
           map((response) =>
             AuthActions.loginSuccess({
-              token: response.token,
+              token: response.token ?? '',
               user: response.user,
             }),
           ),
@@ -41,12 +40,13 @@ export const loginNavigate$ = createEffect(
 );
 
 export const logout$ = createEffect(
-  (actions = inject(Actions), router = inject(Router)) =>
+  (actions = inject(Actions), router = inject(Router), authService = inject(SessionAuthService)) =>
     actions.pipe(
       ofType(AuthActions.logout),
-      // Navigate to login immediately
+      tap(() => authService.logout().subscribe(() => {
+        console.log('Logout successful');
+      })),
       tap(() => router.navigateByUrl('/login')),
-      // And dispatch logoutSuccess so other effects (like clearing storage) can react
       map(() => AuthActions.logoutSuccess()),
     ),
   { functional: true },
@@ -65,22 +65,19 @@ export const startSignalRAfterLogin$ = createEffect(
   { functional: true },
 );
 
-// Persist token on successful login so it survives refresh
-export const persistTokenOnLogin$ = createEffect(
-  (actions = inject(Actions), ls = inject(LocalStorageService)) =>
+export const loadSession$ = createEffect(
+  (actions = inject(Actions), authService = inject(SessionAuthService)) =>
     actions.pipe(
-      ofType(AuthActions.loginSuccess),
-      tap(({ token }) => ls.set('token', token)),
+      ofType(AuthActions.loadSession),
+      switchMap(() =>
+        authService.getSession().pipe(
+          map((user) => AuthActions.loadSessionSuccess({ user })),
+          catchError((err: unknown) => {
+            const error = err instanceof Error ? err.message : 'Session load failed';
+            return of(AuthActions.loadSessionError({ error }));
+          }),
+        ),
+      ),
     ),
-  { functional: true, dispatch: false },
-);
-
-// Clear token on logout (and on logout success for completeness)
-export const clearTokenOnLogout$ = createEffect(
-  (actions = inject(Actions), ls = inject(LocalStorageService)) =>
-    actions.pipe(
-      ofType(AuthActions.logout, AuthActions.logoutSuccess),
-      tap(() => ls.remove('token')),
-    ),
-  { functional: true, dispatch: false },
+  { functional: true },
 );

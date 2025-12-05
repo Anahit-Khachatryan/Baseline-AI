@@ -6,6 +6,21 @@ import { immerOn } from 'ngrx-immer/store';
 
 export const authReducer = createReducer(
   initialState,
+  // Load session from cookie
+  immerOn(AuthActions.loadSession, (state) => {
+    state.loading = true;
+    state.error = null;
+  }),
+  immerOn(AuthActions.loadSessionSuccess, (state, { user }) => {
+    state.user = user;
+    state.loading = false;
+    state.error = null;
+  }),
+  immerOn(AuthActions.loadSessionError, (state, { error }) => {
+    state.user = null;
+    state.loading = false;
+    state.error = error ?? 'Unknown error';
+  }),
   immerOn(AuthActions.login, (state) => {
     state.loading = true;
     state.error = null;
@@ -37,7 +52,7 @@ export const authReducer = createReducer(
 export const authFeature = createFeature({
   name: Features.Auth,
   reducer: authReducer,
-  extraSelectors: ({ selectToken }) => ({
-    selectIsAuthorized: createSelector(selectToken, (token) => !!token),
+  extraSelectors: ({ selectUser }) => ({
+    selectIsAuthorized: createSelector(selectUser, (user) => !!user),
   }),
 });
