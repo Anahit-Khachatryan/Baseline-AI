@@ -6,7 +6,7 @@ import {
   OnInit,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -24,11 +24,12 @@ import { UsersActions } from './store/actions/users.actions';
 import { usersFeature } from './store/features/users.feature';
 import { lookupFeature } from '../../../core/store/features/lookup.feature';
 import { LookupActions } from '../../../core/store/actions/lookup.actions';
+import { ValidationErrorDirective } from '../../../shared/directives/validation-error.directive';
 @Component({
   selector: 'app-users',
   standalone: true,
   imports: [
-    FormsModule,
+    ReactiveFormsModule,
     TableModule,
     ButtonModule,
     InputTextModule,
@@ -39,6 +40,7 @@ import { LookupActions } from '../../../core/store/actions/lookup.actions';
     ToastModule,
     TooltipModule,
     SelectModule,
+    ValidationErrorDirective,
   ],
   providers: [ConfirmationService],
   templateUrl: './users.component.html',
@@ -48,10 +50,10 @@ import { LookupActions } from '../../../core/store/actions/lookup.actions';
 export class UsersComponent implements OnInit {
   private readonly store = inject(Store);
   private readonly confirmationService = inject(ConfirmationService);
+  private readonly fb = inject(FormBuilder);
 
   // Store selectors
   users = this.store.selectSignal(usersFeature.selectUsers);
-  selectedUsers = this.store.selectSignal(usersFeature.selectSelectedUsers);
   loading = this.store.selectSignal(usersFeature.selectLoading);
   // error = this.store.selectSignal(usersFeature.selectError);
   
@@ -62,18 +64,18 @@ export class UsersComponent implements OnInit {
 
   // Local UI state
   searchText = signal('');
-  // selectedRole = signal<string | null>(null);
-  // selectedStatus = signal<string | null>(null);
   displayDialog = signal(false);
   editingUser = signal<User | null>(null);
-  userForm = signal<Partial<CreateUserRequest>>({
-    firstName: '',
-    lastName: '',
-    email: '',
-    role: '',
-    status: 'Active',
-    phone: '',
-    department: '',
+  
+  // Reactive form
+  userForm: FormGroup = this.fb.group({
+    firstName: ['', [Validators.required, Validators.minLength(2)]],
+    lastName: ['', [Validators.required, Validators.minLength(2)]],
+    email: ['', [Validators.required, Validators.email]],
+    role: ['', Validators.required],
+    status: ['Active'],
+    phone: [''],
+    department: [''],
   });
 
   // Computed properties for filtering
@@ -108,21 +110,13 @@ export class UsersComponent implements OnInit {
 
   openNew(): void {
     this.editingUser.set(null);
-    this.userForm.set({
-      firstName: '',
-      lastName: '',
-      email: '',
-      role: '',
-      status: 'Active',
-      phone: '',
-      department: '',
-    });
+    this.userForm.reset();
     this.displayDialog.set(true);
   }
 
   editUser(user: User): void {
     this.editingUser.set(user);
-    this.userForm.set({
+    this.userForm.patchValue({
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
@@ -140,63 +134,45 @@ export class UsersComponent implements OnInit {
       header: 'Confirm Delete',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        // Toast will be shown automatically by toast.effects.ts
         this.store.dispatch(UsersActions.deleteUser({ id: user.id }));
       },
     });
   }
 
-  deleteSelectedUsers(): void {
-    const selected = this.selectedUsers();
-    if (selected.length === 0) {
-      return;
-    }
-
-    this.confirmationService.confirm({
-      message: `Are you sure you want to delete ${selected.length} selected user(s)?`,
-      header: 'Confirm Delete',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        const ids = selected.map((u) => u.id);
-        // Toast will be shown automatically by toast.effects.ts
-        this.store.dispatch(UsersActions.deleteUsers({ ids }));
-      },
-    });
-  }
-
   saveUser(): void {
-    const form = this.userForm();
-    console.log('form', form)
-    const editing = this.editingUser();
-
-    if (!form.firstName || !form.lastName || !form.email || !form.role) {
-      console.log('add validation error')
+    if (this.userForm.invalid) {
+      this.userForm.markAllAsTouched();
       return;
     }
+
+    const formValue = this.userForm.value;
+    const editing = this.editingUser();
 
     if (editing) {
       this.store.dispatch(
         UsersActions.updateUser({
           userData: {
             id: editing.id,
-            ...form,
+            ...formValue,
           },
         }),
       );
     } else {
       this.store.dispatch(
         UsersActions.createUser({
-          userData: form as CreateUserRequest,
+          userData: formValue as CreateUserRequest,
         }),
       );
     }
 
     this.displayDialog.set(false);
     this.editingUser.set(null);
+    this.userForm.reset();
   }
 
-  onSelectionChange(users: User[]): void {
-    this.store.dispatch(UsersActions.setSelectedUsers({ users }));
+  onDialogHide(): void {
+    this.editingUser.set(null);
+    this.userForm.reset();
   }
 
 }
