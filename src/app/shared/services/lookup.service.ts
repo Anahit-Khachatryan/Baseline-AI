@@ -5,6 +5,7 @@ export interface LookupData {
   roles: string[];
   statuses: string[];
   departments: string[];
+  countryCodes: string[];
 }
 
 @Injectable({
@@ -25,6 +26,7 @@ export class LookupService {
       'IT',
       'Administration',
     ],
+    countryCodes: ['+374', '+1', '+44', '+33', '+49', '+7'],
   };
 
   getLookups() {

@@ -25,6 +25,7 @@ import { usersFeature } from './store/features/users.feature';
 import { lookupFeature } from '../../../core/store/features/lookup.feature';
 import { LookupActions } from '../../../core/store/actions/lookup.actions';
 import { ValidationErrorDirective } from '../../../shared/directives/validation-error.directive';
+import { phoneCrossFieldValidator } from '../../../shared/validators/phone.validator';
 @Component({
   selector: 'app-users',
   standalone: true,
@@ -61,6 +62,8 @@ export class UsersComponent implements OnInit {
   roles = this.store.selectSignal(lookupFeature.selectRoles);
   statuses = this.store.selectSignal(lookupFeature.selectStatuses);
   departments = this.store.selectSignal(lookupFeature.selectDepartments);
+  countryCodes = this.store.selectSignal(lookupFeature.selectCountryCodes);
+
 
   // Local UI state
   searchText = signal('');
@@ -74,9 +77,10 @@ export class UsersComponent implements OnInit {
     email: ['', [Validators.required, Validators.email]],
     role: ['', Validators.required],
     status: ['Active'],
-    phone: [''],
-    department: [''],
-  });
+    phoneCountryCode: ['', Validators.required],
+    phone: ['', [Validators.required]],
+    department: ['', Validators.required],
+  }, { validators: phoneCrossFieldValidator() });
 
   // Computed properties for filtering
   filteredData = computed(() => {
@@ -116,13 +120,22 @@ export class UsersComponent implements OnInit {
 
   editUser(user: User): void {
     this.editingUser.set(user);
+    // Extract country code from phone if it exists
+    const phoneCountryCode = user.phone?.startsWith('+') 
+      ? user.phone.split(' ')[0] || '+374'
+      : '+374';
+    const phoneNumber = user.phone?.includes(' ') 
+      ? user.phone.split(' ').slice(1).join(' ')
+      : user.phone || '';
+    
     this.userForm.patchValue({
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
       role: user.role,
       status: user.status,
-      phone: user.phone,
+      phoneCountryCode: phoneCountryCode,
+      phone: phoneNumber,
       department: user.department,
     });
     this.displayDialog.set(true);
@@ -147,20 +160,28 @@ export class UsersComponent implements OnInit {
 
     const formValue = this.userForm.value;
     const editing = this.editingUser();
+    
+    // Combine country code and phone number
+    const phone = `${formValue.phoneCountryCode} ${formValue.phone}`.trim();
+    const userData = {
+      ...formValue,
+      phone,
+      phoneCountryCode: undefined, // Remove from final data
+    };
 
     if (editing) {
       this.store.dispatch(
         UsersActions.updateUser({
           userData: {
             id: editing.id,
-            ...formValue,
+            ...userData,
           },
         }),
       );
     } else {
       this.store.dispatch(
         UsersActions.createUser({
-          userData: formValue as CreateUserRequest,
+          userData: userData as CreateUserRequest,
         }),
       );
     }

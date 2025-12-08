@@ -32,6 +32,7 @@ export const lookupFeature = createFeature({
     selectRoles: createSelector(selectLookups, (lookups) => lookups?.roles ?? []),
     selectStatuses: createSelector(selectLookups, (lookups) => lookups?.statuses ?? []),
     selectDepartments: createSelector(selectLookups, (lookups) => lookups?.departments ?? []),
+    selectCountryCodes: createSelector(selectLookups, (lookups) => lookups?.countryCodes ?? []),
   }),
 });
 

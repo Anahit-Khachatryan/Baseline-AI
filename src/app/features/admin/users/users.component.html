@@ -12,7 +12,6 @@
           label="Add User"
           icon="pi pi-plus"
           (click)="openNew()"
-          styleClass="p-button-success"
         />
       </div>
     </p-toolbar>
@@ -34,22 +33,26 @@
     >
       <ng-template pTemplate="header">
         <tr>
-          <th pSortableColumn="firstName">
-            Name <p-sortIcon field="firstName" />
+          <th pSortableColumn="name">
+            Name <p-sortIcon field="name" />
           </th>
           <th pSortableColumn="email">
             Email <p-sortIcon field="email" />
           </th>
-          <th pSortableColumn="role">
-            Role <p-sortIcon field="role" />
+          <th pSortableColumn="lastLogin">
+            Last Login <p-sortIcon field="lastLogin" />
           </th>
-          <th pSortableColumn="department">
-            Department <p-sortIcon field="department" />
+          <th pSortableColumn="device">
+            Device <p-sortIcon field="device" />
           </th>
           <th pSortableColumn="status">
-            Status <p-sortIcon field="status" />
+            Device status <p-sortIcon field="status" />
           </th>
-          <th pSortableColumn="phone">Phone</th>
+          <th pSortableColumn="acceptedTerms">
+            Accepted terms <p-sortIcon field="acceptedTerms" />
+          </th>
+          <th pSortableColumn="phase">
+            Phase <p-sortIcon field="phase"/></th>
           <th>Actions</th>
         </tr>
       </ng-template>
@@ -57,12 +60,13 @@
         <tr>
           <td>{{ user.firstName }} {{ user.lastName }}</td>
           <td>{{ user.email }}</td>
-          <td>{{ user.role }}</td>
-          <td>{{ user.department }}</td>
+          <td>{{ user.lastLogin }}</td>
+          <td>{{ user.device }}</td>
           <td>
-            {{user.status}}
+            <p-tag [value]="user.status" [severity]="user.status === 'Active' ? 'success' : 'danger'"></p-tag>
           </td>
-          <td>{{ user.phone }}</td>
+          <td>{{ user.acceptedTerms }}</td>
+          <td>{{ user.phase}}</td>
           <td>
             <div class="action-buttons">
               <p-button
@@ -94,95 +98,118 @@
   </div>
 
   <p-dialog
-    [header]="editingUser() ? 'Edit User' : 'Add User'"
     [(visible)]="displayDialog"
     [modal]="true"
-    [style]="{ width: '500px' }"
+    [style]="{ width: '800px' }"
+    [closable]="false"
     (onHide)="onDialogHide()"
   >
-    <form [formGroup]="userForm" class="user-form">
-      <div class="form-group">
-        <label for="firstName">First Name *</label>
-        <input
-          id="firstName"
-          type="text"
-          pInputText
-          formControlName="firstName"
-          placeholder="Enter first name"
-          class="w-full"
-          [validationError]="{required: 'First Name is required'}"
-        />
+    <ng-template pTemplate="header">
+      <div class="flex items-center gap-3">
+        <button 
+          type="button"
+          class="border-none bg-transparent cursor-pointer p-1 text-gray-600 hover:text-gray-800"
+          (click)="displayDialog.set(false)"
+          aria-label="Back"
+        >
+          <i class="pi pi-arrow-left"></i>
+        </button>
+        <h3 class="m-0 text-2xl font-semibold">{{ editingUser() ? 'Edit User' : 'Add User' }}</h3>
       </div>
+    </ng-template>
 
-      <div class="form-group">
-        <label for="lastName">Last Name *</label>
-        <input
-          id="lastName"
-          type="text"
-          pInputText
-          formControlName="lastName"
-          placeholder="Enter last name"
-          class="w-full"
-          [validationError]="{required: 'Last Name is required'}"
-        />
-      </div>
+    <form [formGroup]="userForm">
+      <div class="flex flex-row gap-6">
+        <div class="flex-1 flex flex-col gap-5">
+          <div class="flex flex-col gap-2">
+            <label for="firstName" class="text-sm font-medium text-gray-700">First name <span class="text-red-500">*</span></label>
+            <input
+              id="firstName"
+              type="text"
+              pInputText
+              formControlName="firstName"
+              placeholder="Input first name"
+              class="w-full"
+              [validationError]="{required: 'First Name is required'}"
+            />
+          </div>
 
-      <div class="form-group">
-        <label for="email">Email *</label>
-        <input
-          id="email"
-          type="email"
-          pInputText
-          formControlName="email"
-          placeholder="Enter email"
-          class="w-full"
-          [validationError]="{required: 'First Name is required'}"
-        />
-      </div>
+          <div class="flex flex-col gap-2">
+            <label for="role" class="text-sm font-medium text-gray-700">User role <span class="text-red-500">*</span></label>
+            <p-select
+              id="role"
+              [options]="roles()"
+              formControlName="role"
+              placeholder="Select"
+              class="w-full"
+              [validationError]="{required: 'User role is required'}"
+            />
+          </div>
 
-      <div class="form-group">
-        <label for="phone">Phone</label>
-        <input
-          id="phone"
-          type="text"
-          pInputText
-          formControlName="phone"
-          placeholder="Enter phone number"
-          class="w-full"
-        />
-      </div>
+          <div class="flex flex-col gap-2">
+            <label for="email" class="text-sm font-medium text-gray-700">
+              Email <span class="text-red-500">*</span>
+            </label>
+            <input
+              id="email"
+              type="email"
+              pInputText
+              formControlName="email"
+              placeholder="email"
+              class="w-full"
+              [validationError]="{required: 'Email is required', email: 'Invalid email format'}"
+            />
+          </div>
+        </div>
 
-      <div class="form-group">
-        <label for="role">Role *</label>
-        <p-select
-          id="role"
-          [options]="roles()"
-          formControlName="role"
-          placeholder="Select role"
-          class="w-full"
-        />
-      </div>
+        <div class="flex-1 flex flex-col gap-5">
+          <div class="flex flex-col gap-2">
+            <label for="lastName" class="text-sm font-medium text-gray-700">Last name <span class="text-red-500">*</span></label>
+            <input
+              id="lastName"
+              type="text"
+              pInputText
+              formControlName="lastName"
+              placeholder="Input last name"
+              class="w-full"
+              [validationError]="{required: 'Last Name is required'}"
+            />
+          </div>
 
-      <div class="form-group">
-        <label for="department">Department</label>
-        <p-select
-          id="department"
-          [options]="departments()"
-          formControlName="department"
-          placeholder="Select department"
-          class="w-full"
-        />
-      </div>
+          <div class="flex flex-col gap-2">
+            <label for="department" class="text-sm font-medium text-gray-700">Company <span class="text-red-500">*</span></label>
+            <p-select
+              id="department"
+              [options]="departments()"
+              formControlName="department"
+              placeholder="Select"
+              class="w-full"
+              [validationError]="{required: 'Company is required'}"
+            />
+          </div>
 
-      <div class="form-group">
-        <label for="status">Status</label>
-        <p-select
-          id="status"
-          [options]="statuses()"
-          formControlName="status"
-          placeholder="Select status"
-          class="w-full"
-        />
+          <div class="flex flex-col gap-2">
+            <label for="phone" class="text-sm font-medium text-gray-700">Phone number <span class="text-red-500">*</span></label>
+            <div class="flex gap-2">
+              <p-select
+                id="phoneCountryCode"
+                [options]="countryCodes()"
+                formControlName="phoneCountryCode"
+                class="w-32"
+                [validationError]="{required: 'Country code is required'}"
+              />
+              <input
+                id="phone"
+                type="text"
+                pInputText
+                formControlName="phone"
+                placeholder="Input"
+                class="flex-1"
+                [validationError]="{required: 'Phone number is required', phone: 'Invalid phone number'}"
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </form>
 
